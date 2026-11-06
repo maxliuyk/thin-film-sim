@@ -6,6 +6,28 @@ def interface_coeffs(ni, nj):
     t = 2 * ni / (ni + nj)
     return r, t
 
+def film_amplitudes(wavelength, thickness, n0=1.0, n1=1.5, n2=1.0):
 
-print("air -> glass:", interface_coeffs(1.0, 1.5))
-print("glass -> air:", interface_coeffs(1.5, 1.0))
+    lam = np.asarray(wavelength, dtype=float)
+
+    r01, t01 = interface_coeffs(n0, n1)   
+    r12, t12 = interface_coeffs(n1, n2) 
+
+    delta = 2 * np.pi * n1 * thickness / lam
+    z = np.exp(2j * delta) 
+    den = 1 + r01 * r12 * z 
+
+    r = (r01 + r12 * z) / den
+    t = t01 * t12 * np.exp(1j * delta) / den
+    return r, t
+
+def film_rt(wavelength, thickness, n0=1.0, n1=1.5, n2=1.0):
+    r, t = film_amplitudes(wavelength, thickness, n0, n1, n2)
+    R = np.abs(r) ** 2
+    T = (n2 / n0) * np.abs(t) ** 2
+    return R, T
+
+R, T = film_rt([600e-9, 900e-9], 300e-9)
+print("R:", np.round(R, 6))
+print("T:", np.round(T, 6))
+print("R + T:", np.round(R + T, 6))
