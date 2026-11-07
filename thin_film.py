@@ -26,8 +26,3 @@ def film_rt(wavelength, thickness, n0=1.0, n1=1.5, n2=1.0):
     R = np.abs(r) ** 2
     T = (n2 / n0) * np.abs(t) ** 2
     return R, T
-
-R, T = film_rt([600e-9, 900e-9], 300e-9)
-print("R:", np.round(R, 6))
-print("T:", np.round(T, 6))
-print("R + T:", np.round(R + T, 6))
